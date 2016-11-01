@@ -9,18 +9,169 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="gae.pointage.EntreeDonneesActivity"
-    tools:showIn="@layout/activity_entree_donnees">
+    tools:context="gae.pointage.EntreeDonneesActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollview"
+        android:fillViewport="false"
         android:layout_above="@+id/button_suivant">
 
-    </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/button_suivant">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_endroit"
+                android:layout_gravity="center_horizontal"
+                android:hint="Endroit"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_ville"
+                android:layout_gravity="center_horizontal"
+                android:hint="Ville"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_division"
+                android:layout_gravity="center_horizontal"
+                android:hint="Division"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_classe"
+                android:layout_gravity="center_horizontal"
+                android:hint="Classe"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_num_partie"
+                android:layout_gravity="center_horizontal"
+                android:hint="Numéro de la partie"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_ligue"
+                android:layout_gravity="center_horizontal"
+                android:hint="Ligue"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_equipe_loc"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom de l&apos;équipe locale"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_equipe_vis"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom de l&apos;équipe visiteur"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_juge_but1"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom d&apos;un juge de but"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_juge_but2"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom d&apos;un juge de but"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_juge_ligne1"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom d&apos;un juge de ligne"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_juge_ligne2"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom d&apos;un juge de ligne"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_annonceur"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom de l&apos;annonceur"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_chrono"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom du chronométreur"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_marqueur"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom du marqueur"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edittext_arbitre"
+                android:layout_gravity="center_horizontal"
+                android:hint="Nom de l&apos;arbitre"
+                android:textSize="30dp"
+                android:layout_marginTop="5dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <Button
         android:layout_width="wrap_content"
