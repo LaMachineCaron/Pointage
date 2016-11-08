@@ -40,10 +40,6 @@ public class EntreeDonneesActivity extends AppCompatActivity {
             }
         });
 
-        Set<String> jugesBut = sharedPreferences.getStringSet("NomJugesBut", new HashSet<String>());
-        Set<String> jugesLigne =
-                sharedPreferences.getStringSet("NomJugesLigne", new HashSet<String>());
-
         editTextEndroit = (EditText) findViewById(R.id.edittext_endroit);
         editTextEndroit.setText(sharedPreferences.getString("Endroit", ""));
         editTextVille = (EditText) findViewById(R.id.edittext_ville);
@@ -57,25 +53,25 @@ public class EntreeDonneesActivity extends AppCompatActivity {
         editTextLigue = (EditText) findViewById(R.id.edittext_ligue);
         editTextLigue.setText(sharedPreferences.getString("Ligue", ""));
         editTextEquipeLocale = (EditText) findViewById(R.id.edittext_equipe_loc);
-        editTextEquipeLocale.setText(sharedPreferences.getString("EquipeLocale", ""));
+        editTextEquipeLocale.setText(sharedPreferences.getString("NomEquipeLocale", ""));
         editTextEquipeVisiteur = (EditText) findViewById(R.id.edittext_equipe_vis);
-        editTextEquipeVisiteur.setText(sharedPreferences.getString("EquipeVisiteur", ""));
+        editTextEquipeVisiteur.setText(sharedPreferences.getString("NomEquipeVisiteur", ""));
         editTextJugeBut1 = (EditText) findViewById(R.id.edittext_juge_but1);
-        editTextJugeBut1.setText(jugesBut.iterator().next());
+        editTextJugeBut1.setText(sharedPreferences.getString("NomJugeBut1", ""));
         editTextJugeBut2 = (EditText) findViewById(R.id.edittext_juge_but2);
-        editTextJugeBut2.setText(jugesBut.iterator().next());
+        editTextJugeBut2.setText(sharedPreferences.getString("NomJugeBut2", ""));
         editTextJugeLigne1 = (EditText) findViewById(R.id.edittext_juge_ligne1);
-        editTextJugeLigne1.setText(jugesLigne.iterator().next());
+        editTextJugeLigne1.setText(sharedPreferences.getString("NomJugeLigne1", ""));
         editTextJugeLigne2 = (EditText) findViewById(R.id.edittext_juge_ligne2);
-        editTextJugeLigne2.setText(jugesLigne.iterator().next());
+        editTextJugeLigne2.setText(sharedPreferences.getString("NomJugeLigne2", ""));
         editTextAnnonceur = (EditText) findViewById(R.id.edittext_annonceur);
-        editTextAnnonceur.setText(sharedPreferences.getString("Annonceur", ""));
+        editTextAnnonceur.setText(sharedPreferences.getString("NomAnnonceur", ""));
         editTextChronometreur = (EditText) findViewById(R.id.edittext_chrono);
-        editTextChronometreur.setText(sharedPreferences.getString("Chronometreur", ""));
+        editTextChronometreur.setText(sharedPreferences.getString("NomChrono", ""));
         editTextMarqueur = (EditText) findViewById(R.id.edittext_marqueur);
-        editTextMarqueur.setText(sharedPreferences.getString("Marqueur", ""));
+        editTextMarqueur.setText(sharedPreferences.getString("NomMarqueur", ""));
         editTextArbitre = (EditText) findViewById(R.id.edittext_arbitre);
-        editTextArbitre.setText(sharedPreferences.getString("Arbitre", ""));
+        editTextArbitre.setText(sharedPreferences.getString("NomArbitre", ""));
     }
 
     /**
@@ -88,12 +84,6 @@ public class EntreeDonneesActivity extends AppCompatActivity {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         Date dateAujourdhui = cal.getTime();
-        Set<String> jugesBut = new HashSet<>();
-        jugesBut.add(editTextJugeBut1.getText().toString());
-        jugesBut.add(editTextJugeBut2.getText().toString());
-        Set<String> jugesLigne = new HashSet<>();
-        jugesLigne.add(editTextJugeLigne1.getText().toString());
-        jugesLigne.add(editTextJugeLigne2.getText().toString());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("Endroit", editTextEndroit.getText().toString());
         editor.putString("Ville", editTextVille.getText().toString());
@@ -104,8 +94,10 @@ public class EntreeDonneesActivity extends AppCompatActivity {
         editor.putString("Ligue", editTextLigue.getText().toString());
         editor.putString("NomEquipeLocale", editTextEquipeLocale.getText().toString());
         editor.putString("NomEquipeVisiteur", editTextEquipeVisiteur.getText().toString());
-        editor.putStringSet("NomJugesBut", jugesBut);
-        editor.putStringSet("NomJugesLigne", jugesLigne);
+        editor.putString("NomJugeBut1", editTextJugeBut1.getText().toString());
+        editor.putString("NomJugeBut2", editTextJugeBut2.getText().toString());
+        editor.putString("NomJugeLigne1", editTextJugeLigne1.getText().toString());
+        editor.putString("NomJugeLigne2", editTextJugeLigne2.getText().toString());
         editor.putString("NomAnnonceur", editTextAnnonceur.getText().toString());
         editor.putString("NomChrono", editTextChronometreur.getText().toString());
         editor.putString("NomMarqueur", editTextMarqueur.getText().toString());
