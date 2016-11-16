@@ -11,8 +11,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,8 +41,12 @@ public class main extends AppCompatActivity {
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
+    private ListView listviewEquipe1, listviewEquipe2;
+    private JoueurAdapter joueurAdapterEquipe1, joueurAdapterEquipe2;
     private static final String FORMAT = "%02d:%02d";
     private TextView chronoTexte;
+    private ArrayList<Joueur> equipe1, equipe2;
+    private ImageButton boutonPlayPause;
     private Chrono chrono;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -81,6 +87,21 @@ public class main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mVisible = true;
         this.chronoTexte = (TextView) findViewById(R.id.chrono);
+        this.boutonPlayPause = (ImageButton) findViewById(R.id.play_pause);
+
+        this.equipe1 = new ArrayList<>();
+        this.equipe2 = new ArrayList<>();
+        this.equipe1.add(new Joueur("Alexandre", 45)); this.equipe1.add(new Joueur("Guillaume", 42));
+        this.equipe2.add(new Joueur("Jacques", 4)); this.equipe2.add(new Joueur("Mathieu", 2));
+
+        this.joueurAdapterEquipe1 = new JoueurAdapter(this, equipe1, R.layout.joueur_element_listview_inverse);
+        this.joueurAdapterEquipe2 = new JoueurAdapter(this, equipe2, R.layout.joueur_element_listview);
+
+        this.listviewEquipe1 = (ListView)findViewById(R.id.listview_equipe_1);
+        this.listviewEquipe1.setAdapter(this.joueurAdapterEquipe1);
+
+        this.listviewEquipe2 = (ListView)findViewById(R.id.listview_equipe_2);
+        this.listviewEquipe2.setAdapter(this.joueurAdapterEquipe2);
 
         this.chrono = new Chrono(1200000){
             @Override
@@ -97,17 +118,43 @@ public class main extends AppCompatActivity {
         ImageButton button = (ImageButton) findViewById(R.id.play_pause);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            //TODO: Ça marche pas!! Je pense que c'est l'override de onTick()
             public void onClick(View v) {
                if(!chrono.estEnMarche()){
                    System.out.println("Bouton Play appuyé.");
-                   chrono.commencer();
+                   playChrono();
                }else{
                    System.out.println("Bouton Pause appuyé.");
-                   chrono.pause();
+                   pauseChrono();
                }
             }
         });
+    }
+
+    private void playChrono(){
+        boutonPlayPause.setImageResource(R.drawable.pause);
+        chrono.commencer();
+    }
+
+    private void pauseChrono(){
+        if (this.chrono.estEnMarche()){
+            this.boutonPlayPause.setImageResource(R.drawable.play);
+            this.chrono.pause();
+        }
+    }
+
+    public void penalite(Joueur joueur){
+        pauseChrono();
+        System.out.println("Bouuuhhhh: " + joueur.nom);
+    }
+
+    public void assist(Joueur joueur){
+        pauseChrono();
+        System.out.println("Cet assist provient de " + joueur.nom);
+    }
+
+    public void but(Joueur joueur){
+        pauseChrono();
+        System.out.println("Ce but vous est présenté par: " + joueur.nom);
     }
 
     private void toggle() {

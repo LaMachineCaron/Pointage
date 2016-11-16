@@ -9,8 +9,8 @@ public class Chrono {
 
     private boolean enMarche;
     private boolean aCommence = false;
-    public long tempsRestant;
-    private long tempsPasse;
+    public int tempsRestant;
+    private int tempsPasse;
     private Thread thread;
 
     /**
@@ -18,7 +18,7 @@ public class Chrono {
      * Crée la procédure run() qui s'éxecute au démarrage du chrono.
      * @param tempsInitial Le temps en milliseconde que le chrono doit avoir initialement.
      */
-    public Chrono(final long tempsInitial){
+    public Chrono(final int tempsInitial){
         this.tempsRestant = tempsInitial;
         this.thread = new Thread(new Runnable() {
             public void run() {
@@ -67,8 +67,7 @@ public class Chrono {
      * @return Le temps en string formatté restant.
      */
     public String getTempsRestantFormate(){
-        return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(this.tempsRestant),
-                TimeUnit.MILLISECONDS.toSeconds(this.tempsRestant) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(this.tempsRestant)));
+       return Utilities.formatterTemps(this.tempsRestant);
     }
 
     /**
