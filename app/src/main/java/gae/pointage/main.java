@@ -1,21 +1,16 @@
 package gae.pointage;
 
 import android.annotation.SuppressLint;
-import android.media.Image;
-import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -48,6 +43,9 @@ public class main extends AppCompatActivity {
     private ArrayList<Joueur> equipe1, equipe2;
     private ImageButton boutonPlayPause;
     private Chrono chrono;
+    private Joueur[] assists = {null, null};
+    private TextView pointageTexteEquipe1, pointageTexteEquipe2;
+    private int pointageEquipe1 = 0, pointageEquipe2 = 0;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -89,6 +87,12 @@ public class main extends AppCompatActivity {
         this.chronoTexte = (TextView) findViewById(R.id.chrono);
         this.boutonPlayPause = (ImageButton) findViewById(R.id.play_pause);
 
+        this.pointageTexteEquipe1 = (TextView)findViewById(R.id.textview_pointage_equipe_1);
+        this.pointageTexteEquipe2 = (TextView)findViewById(R.id.textview_pointage_equipe_2);
+
+        this.pointageTexteEquipe1.setText(String.valueOf(this.pointageEquipe1));
+        this.pointageTexteEquipe2.setText(String.valueOf(this.pointageEquipe2));
+
         this.equipe1 = new ArrayList<>();
         this.equipe2 = new ArrayList<>();
         this.equipe1.add(new Joueur("Alexandre", 45)); this.equipe1.add(new Joueur("Guillaume", 42));
@@ -103,7 +107,7 @@ public class main extends AppCompatActivity {
         this.listviewEquipe2 = (ListView)findViewById(R.id.listview_equipe_2);
         this.listviewEquipe2.setAdapter(this.joueurAdapterEquipe2);
 
-        this.chrono = new Chrono(1200000){
+        this.chrono = new Chrono(1200000) {
             @Override
             public void onTick() {
                 runOnUiThread(new Runnable() {
@@ -119,7 +123,7 @@ public class main extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(!chrono.estEnMarche()){
+               if(!chrono.estEnMarche()) {
                    System.out.println("Bouton Play appuyé.");
                    playChrono();
                }else{
@@ -130,30 +134,57 @@ public class main extends AppCompatActivity {
         });
     }
 
-    private void playChrono(){
+    private void playChrono() {
         boutonPlayPause.setImageResource(R.drawable.pause);
         chrono.commencer();
     }
 
-    private void pauseChrono(){
-        if (this.chrono.estEnMarche()){
+    private void pauseChrono() {
+        if (this.chrono.estEnMarche()) {
             this.boutonPlayPause.setImageResource(R.drawable.play);
             this.chrono.pause();
         }
     }
 
-    public void penalite(Joueur joueur){
+    public void penalite(Joueur joueur) {
         pauseChrono();
         System.out.println("Bouuuhhhh: " + joueur.nom);
     }
 
-    public void assist(Joueur joueur){
+    public void assist(Joueur joueur) {
         pauseChrono();
         System.out.println("Cet assist provient de " + joueur.nom);
     }
 
-    public void but(Joueur joueur){
+    public void ajouterAssist(Joueur joueur) {
+        this.assists[1] = this.assists[0];
+        this.assists[0] = joueur;
+    }
+
+    public void retirerAssist(Joueur joueur) {
+        if (this.assists[0] == joueur) {
+            this.assists[0] = this.assists[1];
+        }
+        this.assists[1] = null;
+    }
+
+    public void viderAssists() {
+        this.assists[0] = null;
+        this.assists[1] = null;
+    }
+
+    public void but(Joueur joueur) {
         pauseChrono();
+        Joueur[] assistsCopie = this.assists.clone();
+        this.viderAssists();
+        //TODO: comptabiliser le but
+        if (this.equipe1.contains(joueur)) {
+            this.pointageEquipe1 += 1;
+            this.pointageTexteEquipe1.setText(String.valueOf(this.pointageEquipe1));
+        } else {
+            this.pointageEquipe2 += 1;
+            this.pointageTexteEquipe2.setText(String.valueOf(this.pointageEquipe2));
+        }
         System.out.println("Ce but vous est présenté par: " + joueur.nom);
     }
 
