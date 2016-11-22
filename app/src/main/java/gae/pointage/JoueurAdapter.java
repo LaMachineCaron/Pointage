@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import gae.pointage.bdd.Joueur;
 
 /**
  * Created by Alexandre on 2016-11-14.
@@ -17,10 +20,10 @@ public class JoueurAdapter extends BaseAdapter {
 
     private main context;
     private int layoutId;
-    private ArrayList<Joueur> pairs;
+    private List<Joueur> pairs;
 
     public JoueurAdapter(main context,
-                         ArrayList<Joueur> pairs,
+                         List<Joueur> pairs,
                          int layoutId) {
         this.context = context;
         this.pairs = pairs;
@@ -73,9 +76,9 @@ public class JoueurAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.textviewNumeroJoueur.setText(Integer.toString(this.pairs.get(position).numero));
-        viewHolder.textviewNomJoueur.setText(this.pairs.get(position).nom);
-        viewHolder.textviewTempsPenalite.setText(Utilities.formatterTemps(this.pairs.get(position).temps_penalite_restant));
+        viewHolder.textviewNumeroJoueur.setText(this.pairs.get(position).getNumero());
+        viewHolder.textviewNomJoueur.setText(this.pairs.get(position).getNom());
+        //viewHolder.textviewTempsPenalite.setText(Utilities.formatterTemps(this.pairs.get(position).));
         viewHolder.buttonBut.setOnClickListener(new View.OnClickListener(){
 
             @Override
