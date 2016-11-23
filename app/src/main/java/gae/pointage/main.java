@@ -1,8 +1,6 @@
 package gae.pointage;
 
 import android.annotation.SuppressLint;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
@@ -19,30 +17,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import gae.pointage.bdd.But;
 import gae.pointage.bdd.Equipe;
-import gae.pointage.bdd.Infraction;
 import gae.pointage.bdd.Joueur;
 import gae.pointage.bdd.Partie;
-import gae.pointage.bdd.Penalite;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class main extends AppCompatActivity {
-
-	// MA SHIT
-	/**
-	 * The bdd object for the application.
-	 */
-	SQLiteDatabase bdd;
-	//FIN MA SHIT
-
-	/**
+    /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
      */
@@ -68,6 +52,11 @@ public class main extends AppCompatActivity {
     private Equipe equipe1, equipe2;
     private ImageButton boutonPlayPause;
     private Chrono chrono;
+    private Joueur[] assists = {null, null};
+    private int Periode = 1;
+    private TextView pointageTexteEquipe1, pointageTexteEquipe2;
+    private int pointageEquipe1 = 0, pointageEquipe2 = 0;
+    private Partie partie = new Partie();
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -112,6 +101,12 @@ public class main extends AppCompatActivity {
         this.equipe1 = (Equipe) Equipe.find(Equipe.class, "id=?", "1").get(0);
         this.equipe2 = (Equipe) Equipe.find(Equipe.class, "id=?", "2").get(0);
 
+        this.pointageTexteEquipe1 = (TextView)findViewById(R.id.textview_pointage_equipe_1);
+        this.pointageTexteEquipe2 = (TextView)findViewById(R.id.textview_pointage_equipe_2);
+
+        this.pointageTexteEquipe1.setText(String.valueOf(this.pointageEquipe1));
+        this.pointageTexteEquipe2.setText(String.valueOf(this.pointageEquipe2));
+
         this.joueurAdapterEquipe1 = new JoueurAdapter(this, equipe1.getJoueurs(), R.layout.joueur_element_listview_inverse);
         this.joueurAdapterEquipe2 = new JoueurAdapter(this, equipe2.getJoueurs(), R.layout.joueur_element_listview);
 
@@ -146,16 +141,6 @@ public class main extends AppCompatActivity {
                }
             }
         });
-
-
-
-    }
-
-
-
-	@Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
     }
 
     private void playChrono(){
@@ -180,8 +165,37 @@ public class main extends AppCompatActivity {
         System.out.println("Cet assist provient de " + joueur.getNom());
     }
 
-    public void but(Joueur joueur){
+    public void ajouterAssist(Joueur joueur) {
+        this.assists[1] = this.assists[0];
+        this.assists[0] = joueur;
+    }
+
+    public void retirerAssist(Joueur joueur) {
+        if (this.assists[0] == joueur) {
+            this.assists[0] = this.assists[1];
+        }
+        this.assists[1] = null;
+    }
+
+    public void viderAssists() {
+        this.assists[0] = null;
+        this.assists[1] = null;
+    }
+
+    public void but(Joueur joueur) {
         pauseChrono();
+        System.out.println("Ce but vous est présenté par: " + joueur.getNom());
+        Joueur[] assistsCopie = this.assists.clone();
+        this.viderAssists();
+        //TODO: comptabiliser le but
+        BDD.ajouterBut(this.partie, joueur, this.assists[1], this.assists[0], this.chrono.tempsRestant, this.Periode);
+        if (this.equipe1 == joueur.getEquipe()) {
+            this.pointageEquipe1 += 1;
+            this.pointageTexteEquipe1.setText(String.valueOf(this.pointageEquipe1));
+        } else {
+            this.pointageEquipe2 += 1;
+            this.pointageTexteEquipe2.setText(String.valueOf(this.pointageEquipe2));
+        }
         System.out.println("Ce but vous est présenté par: " + joueur.getNom());
     }
 

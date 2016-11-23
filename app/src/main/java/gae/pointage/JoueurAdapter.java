@@ -101,7 +101,13 @@ public class JoueurAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 context.assist(pairs.get(position));
-                finalViewHolder.buttonAssist.setPressed(! finalViewHolder.buttonAssist.isPressed());
+                if (finalViewHolder.buttonAssist.isPressed()){
+                    finalViewHolder.buttonAssist.setPressed(false);
+                    context.retirerAssist(pairs.get(position));
+                } else {
+                    finalViewHolder.buttonAssist.setPressed(true);
+                    context.ajouterAssist(pairs.get(position));
+                }
             }
         });
 

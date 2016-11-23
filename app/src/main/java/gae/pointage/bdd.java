@@ -44,8 +44,8 @@ public class BDD {
      * @param temps Le temps en ms de la période en cours
      * @param periode La numéro de la période
      */
-    public static void ajouterBut(Partie partie, gae.pointage.bdd.Joueur compteur, gae.pointage.bdd.Joueur assistant1,
-                                  gae.pointage.bdd.Joueur assistant2, int temps, int periode) {
+    public static void ajouterBut(Partie partie, Joueur compteur, Joueur assistant1,
+                                  Joueur assistant2, int temps, int periode) {
         But but = new But();
         but.setPartie(partie);
         but.setCompteur(compteur);
