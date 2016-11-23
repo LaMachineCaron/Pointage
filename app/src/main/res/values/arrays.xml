@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="equipe1">
+        <item>Alexandre Caron</item>
+        <item>Émilio Gonzalez</item>
+        <item>Guillaume Jean</item>
+    </string-array>
+
+    <string-array name="equipe2">
+        <item>Louis Marchand</item>
+        <item>Benoit Desrosiers</item>
+        <item>Stéphane Janvier</item>
+    </string-array>
+
+</resources>
