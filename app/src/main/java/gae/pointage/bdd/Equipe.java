@@ -7,7 +7,9 @@ import java.util.List;
  * Created by Res260 on 08/11/2016.
  */
 public class Equipe extends SugarRecord {
+
 	protected String nom;
+	protected Ligue ligue;
 
 	/**
 	 * Constructeur pour une équipe
@@ -24,6 +26,14 @@ public class Equipe extends SugarRecord {
 
 	public List<Partie> getPartiesVisiteur() {
 		return Partie.find(Partie.class, "equipeVisiteur = ?", this.getId().toString());
+	}
+
+	public Ligue getLigue() {
+		return ligue;
+	}
+
+	public void setLigue(Ligue ligue) {
+		this.ligue = ligue;
 	}
 
 	public String getNom() {

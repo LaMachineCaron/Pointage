@@ -1,9 +1,12 @@
 package gae.pointage;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,11 +18,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import gae.pointage.bdd.Equipe;
+import gae.pointage.bdd.Infraction;
 import gae.pointage.bdd.Joueur;
 import gae.pointage.bdd.Partie;
+import gae.pointage.bdd.Penalite;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -50,13 +57,18 @@ public class main extends AppCompatActivity {
     private static final String FORMAT = "%02d:%02d";
     private TextView chronoTexte;
     private Equipe equipe1, equipe2;
+    private TextView nomEquipe1, nomEquipe2;
+    private TextView textViewPeriode;
     private ImageButton boutonPlayPause;
-    private Chrono chrono;
+    public Chrono chrono;
     private Joueur[] assists = {null, null};
-    private int Periode = 1;
+    public List<Penalite> penalitesEnCours = new LinkedList<>();
     private TextView pointageTexteEquipe1, pointageTexteEquipe2;
     private int pointageEquipe1 = 0, pointageEquipe2 = 0;
-    private Partie partie = new Partie();
+    public Partie partie = new Partie();
+    private SharedPreferences sharedPreferences;
+
+    public static final int TEMPS_PERIODE = 1200000;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -94,12 +106,20 @@ public class main extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        this.sharedPreferences = this.getSharedPreferences("Pointage", 0);
+
         mVisible = true;
         this.chronoTexte = (TextView) findViewById(R.id.chrono);
+        this.textViewPeriode = (TextView) findViewById(R.id.textview_numero_periode);
         this.boutonPlayPause = (ImageButton) findViewById(R.id.play_pause);
-        BDD.init();
-        this.equipe1 = (Equipe) Equipe.find(Equipe.class, "id=?", "1").get(0);
-        this.equipe2 = (Equipe) Equipe.find(Equipe.class, "id=?", "2").get(0);
+        this.equipe1 = (Equipe) Equipe.find(Equipe.class, "nom=?", this.sharedPreferences.getString("NomEquipeLocale", "")).get(0);
+        this.equipe2 = (Equipe) Equipe.find(Equipe.class, "nom=?", this.sharedPreferences.getString("NomEquipeVisiteur", "")).get(0);
+
+        this.nomEquipe1 = (TextView) findViewById(R.id.textview_nom_equipe_1);
+        this.nomEquipe2 = (TextView) findViewById(R.id.textview_nom_equipe_2);
+        this.nomEquipe1.setText(this.equipe1.getNom());
+        this.nomEquipe2.setText(this.equipe2.getNom());
 
         this.pointageTexteEquipe1 = (TextView)findViewById(R.id.textview_pointage_equipe_1);
         this.pointageTexteEquipe2 = (TextView)findViewById(R.id.textview_pointage_equipe_2);
@@ -116,13 +136,16 @@ public class main extends AppCompatActivity {
         this.listviewEquipe2 = (ListView)findViewById(R.id.listview_equipe_2);
         this.listviewEquipe2.setAdapter(this.joueurAdapterEquipe2);
 
-        this.chrono = new Chrono(1200000){
+        this.chrono = new Chrono(main.TEMPS_PERIODE){
             @Override
             public void onTick() {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         chronoTexte.setText(chrono.getTempsRestantFormate());
+                        textViewPeriode.setText(String.valueOf(chrono.periode));
+                        joueurAdapterEquipe1.notifyDataSetChanged();
+                        joueurAdapterEquipe2.notifyDataSetChanged();
                     }
                 });
             }
@@ -143,6 +166,11 @@ public class main extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        this.penalitesEnCours.clear();
+    }
+
     private void playChrono(){
         boutonPlayPause.setImageResource(R.drawable.pause);
         chrono.commencer();
@@ -155,9 +183,40 @@ public class main extends AppCompatActivity {
         }
     }
 
+    public void retirerPenalite(Penalite penalite){
+        this.penalitesEnCours.remove(penalite);
+        System.out.println("hahaha");
+    }
+
     public void penalite(Joueur joueur){
         pauseChrono();
-        System.out.println("Bouuuhhhh: " + joueur.getNom());
+
+        long nombreInfractions = Infraction.count(Infraction.class);
+        CharSequence[] infractions = new CharSequence[(int) nombreInfractions];
+
+        int i = 0;
+        for(Infraction infraction : Infraction.listAll(Infraction.class)) {
+            infractions[i] = infraction.getNom();
+            i++;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final Joueur joueurFinal = joueur;
+        builder.setTitle("Choisissez l'infraction");
+        builder.setItems(infractions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int temps = chrono.tempsPasse - ((chrono.periode - 1) * TEMPS_PERIODE);
+                Penalite penalite = BDD.ajouterPenalite(partie, Infraction.listAll(Infraction.class).get(which), joueurFinal.getEquipe(),
+                        joueurFinal, temps, chrono.periode);
+                penalitesEnCours.add(penalite);
+                joueurAdapterEquipe1.notifyDataSetChanged();
+                joueurAdapterEquipe2.notifyDataSetChanged();
+            }
+        });
+        builder.show();
+
+        System.out.println("Bouuuhhhh: " + joueur.getNom() + " avec: " + String.valueOf(this.penalitesEnCours.size()));
     }
 
     public void assist(Joueur joueur){
@@ -187,9 +246,8 @@ public class main extends AppCompatActivity {
         System.out.println("Ce but vous est présenté par: " + joueur.getNom());
         Joueur[] assistsCopie = this.assists.clone();
         this.viderAssists();
-        //TODO: comptabiliser le but
-        BDD.ajouterBut(this.partie, joueur, this.assists[1], this.assists[0], this.chrono.tempsRestant, this.Periode);
-        if (this.equipe1 == joueur.getEquipe()) {
+        BDD.ajouterBut(this.partie, joueur, this.assists[1], this.assists[0], this.chrono.tempsPasse, this.chrono.periode);
+        if (this.equipe1.getId() == joueur.getEquipe().getId()) {
             this.pointageEquipe1 += 1;
             this.pointageTexteEquipe1.setText(String.valueOf(this.pointageEquipe1));
         } else {

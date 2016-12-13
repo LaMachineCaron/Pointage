@@ -9,8 +9,10 @@ public class Chrono {
 
     private boolean enMarche;
     private boolean aCommence = false;
+    public int periode = 1;
     public int tempsRestant;
-    private int tempsPasse;
+    public int tempsPasse;
+    public int tempsInitial;
     private Thread thread;
 
     /**
@@ -19,16 +21,22 @@ public class Chrono {
      * @param tempsInitial Le temps en milliseconde que le chrono doit avoir initialement.
      */
     public Chrono(final int tempsInitial){
+        this.tempsInitial = tempsInitial;
         this.tempsRestant = tempsInitial;
         this.thread = new Thread(new Runnable() {
             public void run() {
-                while(true) {
+                while(! thread.isInterrupted()) {
                     if (enMarche) {
-                        System.out.println("Chrono en marche.");
-                        System.out.println(getTempsRestantFormate());
-                        tempsPasse += 1000;
-                        tempsRestant = tempsInitial - tempsPasse;
-                        onTick();                    }
+                        if (tempsRestant > 0) {
+                            System.out.println("Chrono en marche.");
+                            System.out.println(getTempsRestantFormate());
+                            tempsPasse += 1000;
+                            tempsRestant = tempsInitial - tempsPasse;
+                            onTick();
+                        } else {
+                            periodeTermine();
+                        }
+                    }
                     try {
                         System.out.println("Chrono fait dodo.");
                         thread.sleep(1000);
@@ -38,6 +46,16 @@ public class Chrono {
                 }
             }
         });
+    }
+
+    private void periodeTermine()
+    {
+        if (this.periode == 3) {
+            thread.interrupt();
+        } else {
+            this.periode = this.periode + 1;
+            this.tempsRestant = this.tempsInitial;
+        }
     }
 
     /**

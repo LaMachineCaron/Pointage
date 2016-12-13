@@ -10,11 +10,20 @@ public class BDD {
 
     public static void init(){
 
+        BDD.viderTables();
+        Ligue ligue1 = new Ligue();
+        ligue1.setNom("Ligue AA");
+        ligue1.save();
+        Ligue ligue2 = new Ligue();
+        ligue2.setNom("Ligue BB");
+        ligue2.save();
         Equipe uneEquipe = new Equipe();
-        uneEquipe.setNom("Les noobs");
+        uneEquipe.setNom("Tigres");
+        uneEquipe.setLigue(ligue1);
         uneEquipe.save();
         Equipe uneAutreEquipe = new Equipe();
-        uneAutreEquipe.setNom("Les fixeurs");
+        uneAutreEquipe.setNom("Cougars");
+        uneAutreEquipe.setLigue(ligue1);
         uneAutreEquipe.save();
         gae.pointage.bdd.Joueur unJoueur = new gae.pointage.bdd.Joueur();
         unJoueur.setNumero("260");
@@ -24,15 +33,32 @@ public class BDD {
         gae.pointage.bdd.Joueur unAutreJoueur = new gae.pointage.bdd.Joueur();
         unAutreJoueur.setNumero("42");
         unAutreJoueur.setNom("Caron");
-        unAutreJoueur.setEquipe(uneEquipe);
+        unAutreJoueur.setEquipe(uneAutreEquipe);
         unAutreJoueur.save();
-        Partie unePartie = new Partie();
-        unePartie.setEquipeLocale(uneEquipe);
-        unePartie.setEquipeVisiteur(uneAutreEquipe);
-        unePartie.setClasse("classe1");
-        unePartie.save();
-        unePartie.setClasse("classe2");
-        unePartie.save();
+        gae.pointage.bdd.Joueur unGardien = new gae.pointage.bdd.Joueur();
+        unGardien.setNumero("420");
+        unGardien.setNom("Jombo");
+        unGardien.setEquipe(uneEquipe);
+        unGardien.setEstGardien(true);
+        unGardien.save();
+        gae.pointage.bdd.Joueur unAutreGardien = new gae.pointage.bdd.Joueur();
+        unAutreGardien.setNumero("421");
+        unAutreGardien.setNom("Jambo");
+        unAutreGardien.setEquipe(uneAutreEquipe);
+        unAutreGardien.setEstGardien(true);
+        unAutreGardien.save();
+        BDD.ajouterInfractions();
+    }
+
+    private static void viderTables() {
+        Equipe.deleteAll(Equipe.class);
+        Joueur.deleteAll(Joueur.class);
+        Partie.deleteAll(Partie.class);
+        Infraction.deleteAll(Infraction.class);
+        But.deleteAll(But.class);
+        Penalite.deleteAll(Penalite.class);
+        Ligue.deleteAll(Ligue.class);
+
     }
 
     /**
@@ -61,6 +87,7 @@ public class BDD {
      * @param nom Le nom de l'équipe
      */
     public static void ajouterEquipe(String nom) {
+
         Equipe equipe = new Equipe();
         equipe.setNom(nom);
         equipe.save();
@@ -91,7 +118,7 @@ public class BDD {
      * @param tempsDebut Le temps en ms du début de la pénalité
      * @param periode	 Le numéro de la période de la pénalité
      */
-    public static void ajouterPenalite(Partie partie, Infraction infraction, Equipe equipe,
+    public static Penalite ajouterPenalite(Partie partie, Infraction infraction, Equipe equipe,
                                        Joueur joueur, int tempsDebut, int periode) {
         Penalite penalite = new Penalite();
         penalite.setPartie(partie);
@@ -100,6 +127,7 @@ public class BDD {
         penalite.setJoueur(joueur);
         penalite.setTempsDebut(tempsDebut);
         penalite.setPeriode(periode);
+        return penalite;
     }
 
     /**
@@ -113,9 +141,9 @@ public class BDD {
         infraction1.save();
 
         Infraction infraction2 = new Infraction();
-        infraction1.setNom("Être pas fin");
-        infraction1.setDescription("hihi");
-        infraction1.setTemps(5*60*1000);
-        infraction1.save();
+        infraction2.setNom("Être pas fin");
+        infraction2.setDescription("hihi");
+        infraction2.setTemps(5*60*1000);
+        infraction2.save();
     }
 }
